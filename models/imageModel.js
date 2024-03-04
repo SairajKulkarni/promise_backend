@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
 const imageSchema = new mongoose.Schema({
-  subjectName: {
-    type: String,
-    required: true,
-  },
-  examType: {
+  category: {
     type: String,
     required: true,
   },
