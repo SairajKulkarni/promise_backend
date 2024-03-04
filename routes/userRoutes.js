@@ -46,7 +46,7 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset", resetPassword);
 router.get("/logout", logout);
 
-router.get("/me", isAuthenticatedUser, getUserDetails);
+router.get("/me", getUserDetails);
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 router.put("/me/update", isAuthenticatedUser, singleUpload, updateUserProfile);
 
@@ -60,31 +60,7 @@ router.get(
 
 router.post("/admin/login", loginUser);
 
-router.post("/astrologer/login", loginUser);
-
-router.get("/getTopAstrologers", isAuthenticatedUser, getTopAstrologers);
-
-router.get(
-  "/getFeaturedAstrologerData",
-  isAuthenticatedUser,
-  getFeaturedAstrologers
-);
-
-// Get all reviews for a particular astrologer
-router.get("/getRatings/:astrologerId", getReviews);
-
-// Post a review for a particular astrologer
-router.post("/postRating/:astrologerId", isAuthenticatedUser, postReview);
-
 // Get the top reviews
 router.get("/getTopReviews", isAuthenticatedUser, getTopReviews);
-
-router.get("/astrologers", isAuthenticatedUser, getAstrologersList);
-
-router.get(
-  "/astrologers/:astrologerId",
-  isAuthenticatedUser,
-  getAstrologerDetails
-);
 
 export default router;
