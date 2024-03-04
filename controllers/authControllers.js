@@ -44,19 +44,9 @@ export const sendOTP = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password, otp } = req.body;
-  console.log(otp);
+  const { name, email, password } = req.body;
 
   try {
-    // Find the OTP document by email
-    const otpDocument = await OTPModel.findOne({ email });
-    console.log(otpDocument);
-
-    // Check if the OTP document is available
-    if (!otpDocument || otpDocument.otp !== otp) {
-      return next(new ErrorHandler("Invalid OTP or OTP expired", 400));
-    }
-
     // Create a new user with the provided details
     const user = await User.create({
       name,
@@ -64,7 +54,8 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
       password,
     });
 
-    user.save();
+    // Save the user to the database
+    await user.save();
 
     // Send a response to the client indicating successful registration
     res.status(201).json({
