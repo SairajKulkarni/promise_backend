@@ -46,7 +46,7 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset", resetPassword);
 router.get("/logout", logout);
 
-router.get("/me", getUserDetails);
+router.get("/me", isAuthenticatedUser, getUserDetails);
 router.put("/password/update", isAuthenticatedUser, updatePassword);
 router.put("/me/update", isAuthenticatedUser, singleUpload, updateUserProfile);
 

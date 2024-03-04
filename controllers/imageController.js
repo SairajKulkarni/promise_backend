@@ -6,7 +6,8 @@ import cloudinary from "cloudinary";
 
 export const uploadImage = catchAsyncErrors(async (req, res, next) => {
   try {
-    const category = req.body.category;
+    const subjectName = req.body.subjectName;
+    const examType = req.body.examType;
     const file = req.file;
 
     if (!category || !file) {
