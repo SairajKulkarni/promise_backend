@@ -46,6 +46,32 @@ export const sendOTP = catchAsyncErrors(async (req, res, next) => {
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
 
+  // Validate email format and domain
+  const validEmailFormat = /\S+@\S+\.\S+/;
+  const validEmailDomain = /@vitbhopal\.ac\.in$/;
+
+  if (!validEmailFormat.test(email)) {
+    return next(new ErrorHandler("Invalid email format", 400));
+  }
+
+  if (!validEmailDomain.test(email)) {
+    return next(
+      new ErrorHandler(
+        "Invalid email domain. Only @vitbhopal.ac.in is allowed",
+        400
+      )
+    );
+  }
+
+  // Validate password complexity
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9a-zA-Z]).{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    return next(
+      new ErrorHandler("Password must meet complexity requirements", 400)
+    );
+  }
+
   try {
     // Create a new user with the provided details
     const user = await User.create({
@@ -111,6 +137,7 @@ export const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Login User
+// Login User
 export const loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -121,20 +148,29 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  // in the user model we have made the selecion of password as false therefore we need to select the password filed diffferently as following
+  // in the user model we have made the selection of password as false, therefore, we need to select the password field differently as following
   const user = await User.findOne({ email }).select("+password");
 
-  // if no user with the provided email if found the following condition
+  // if no user with the provided email is found, return an error
   if (!user) return next(new ErrorHandler("Invalid email or password", 401));
 
   const isPasswordMatched = await user.comparePassword(password);
 
-  // if user with given email id is found but the password provided is wrong
+  // if user with the given email id is found but the password provided is wrong, return an error
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid email or password", 401));
   }
 
-  // if the password matches the return the token
+  // Additional password complexity check (if needed for login)
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9a-zA-Z]).{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    return next(
+      new ErrorHandler("Password does not meet complexity requirements", 400)
+    );
+  }
+
+  // if the password matches, return the token
   sendToken(user, 200, res);
 });
 
